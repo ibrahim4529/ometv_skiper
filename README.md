@@ -12,7 +12,7 @@ based on your gender preference.
 ## Todo
 - [X] Make area selector
 - [X] Make screen capture for capturing image
-- [ ] Make Face detection from screen capture
-- [ ] Make gender detection 
+- [X] Make Face detection from screen capture
+- [X] Make gender detection 
 - [ ] Make button skip area picker
 - [ ] Make Action for skip image (using pyatogui)
