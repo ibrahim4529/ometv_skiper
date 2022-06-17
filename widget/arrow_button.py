@@ -41,6 +41,24 @@ class ArrowButton(QObject):
         painter.drawEllipse(self.pen_width_half, self.pen_width_half, self.diameter, self.diameter)
         painter.end()
         return pixmap
+
+    def get_check_button(self) -> QPixmap:
+        pixmap = QPixmap(self.diameter + self.pen_width, self.diameter + self.pen_width)
+        pixmap.fill(Qt.transparent)
+        painter = QPainter()
+        painter.begin(pixmap)
+        painter.setRenderHints(QPainter.Antialiasing, True)
+        brush = QBrush()
+        brush.setColor(Qt.green)
+        brush.setStyle(Qt.SolidPattern)
+        painter.setBrush(brush)
+        pen = QPen()
+        pen.setColor(Qt.black)
+        pen.setWidthF(self.pen_width)
+        painter.setPen(pen)
+        painter.drawEllipse(self.pen_width_half, self.pen_width_half, self.diameter, self.diameter)
+        painter.end()
+        return pixmap
     
     def get_arrow(self, degree: DegrePosition) -> QPixmap:
         pixmap = QPixmap(self.diameter + self.pen_width, self.diameter+ self.pen_width)

@@ -53,7 +53,7 @@ class AreaSelector(QWidget):
         self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint | Qt.ToolTip)
         self.setAttribute(Qt.WA_TranslucentBackground, True)
         self.setMouseTracking(True)
-        self.hide()
+        self.setVisible(False)
     
     
     def mousePressEvent(self, event: QMouseEvent) -> None:
@@ -80,6 +80,8 @@ class AreaSelector(QWidget):
                 self.handle_press = HandlePosition.MIDDLE_RIGHT
             case HandlePosition.MIDDLE:
                 self.handle_press = HandlePosition.MIDDLE
+            case HandlePosition.OK_HANDLE:
+                self.area_selected.emit(self.get_react())
         self.mouse_delta_x = event.x() - self.frame_x
         self.mouse_delta_y = event.y() - self.frame_y
         self.old_mouse_x = event.x()
@@ -272,6 +274,11 @@ class AreaSelector(QWidget):
             self.handle_under_mouse = HandlePosition.MIDDLE_LEFT
             return
         
+        region_ok_button = QRect(self.frame_x + self.frame_width / 2 - area_selector_button.get_width_half(), self.frame_y + self.frame_height + 2 * area_selector_button.get_width_half(), area_selector_button.get_width_half() * 2, area_selector_button.get_width_half() * 2)
+        if region_ok_button.contains(event.pos()):
+            self.setCursor(Qt.PointingHandCursor)
+            self.handle_under_mouse = HandlePosition.OK_HANDLE
+            return
         self.unsetCursor()
         self.handle_under_mouse = HandlePosition.NO_HANDLE
 
@@ -299,6 +306,7 @@ class AreaSelector(QWidget):
             painter_pixmap = self.handle_bottom_right(painter_pixmap)
             painter_pixmap = self.handle_left_middle(painter_pixmap)
             painter_pixmap = self.handle_middle(painter_pixmap)
+            painter_pixmap = self.handle_ok_button(painter_pixmap)
 
         painter_pixmap = self.draw_frame(painter_pixmap)
         painter_pixmap.end()
@@ -386,6 +394,12 @@ class AreaSelector(QWidget):
         painter.drawPixmap(self.frame_x + self.frame_width / 2 - button.get_width_half(), self.frame_y + self.frame_height / 2 - button.get_width_half(), button.get_arrow(DegrePosition.MIDDLE_RIGHT))
         painter.drawPixmap(self.frame_x + self.frame_width / 2 - button.get_width_half(), self.frame_y + self.frame_height / 2 - button.get_width_half(), button.get_arrow(DegrePosition.BOTTOM_MIDDLE))
         painter.drawPixmap(self.frame_x + self.frame_width / 2 - button.get_width_half(), self.frame_y + self.frame_height / 2 - button.get_width_half(), button.get_arrow(DegrePosition.MIDDLE_LEFT))
+        return painter
+    
+    def handle_ok_button(self, painter: QPainter) -> QPainter:
+        button = ArrowButton()
+        painter.drawPixmap(self.frame_x + self.frame_width / 2 - button.get_width_half(), self.frame_y + self.frame_height + 2 * button.get_width_half(), button.get_check_button())
+        painter.drawText(self.frame_x + self.frame_width / 2 -  button.get_width_half() * 0.4 , self.frame_y + self.frame_height + 3.4 * self.radius,"OK")
         return painter
     
     def get_x(self):

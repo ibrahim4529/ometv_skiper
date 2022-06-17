@@ -14,6 +14,7 @@ class HandlePosition(Enum):
     BOTTOM_MIDDLE = 7
     BOTTOM_RIGHT = 8
     NO_HANDLE = 9
+    OK_HANDLE = 10
 
 class DegrePosition(Enum):
     """
