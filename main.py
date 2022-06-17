@@ -8,7 +8,7 @@ from helper.screen_graber import ScreenGraberThread
 class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
-        self.setWindowTitle("Main Window")
+        self.setWindowTitle("OMETV SKIPER")
         self.area_selector = AreaSelector()
         self.button_select_area = QPushButton("Select Area")
         self.button_start = QPushButton("Start")
