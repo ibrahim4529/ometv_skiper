@@ -1,2 +1,4 @@
 pyinstaller
 PySide6
+mss
+opencv-python

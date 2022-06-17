@@ -1,10 +1,11 @@
-from PySide6.QtCore import Qt, QRect, QPoint
+from PySide6.QtCore import Qt, QRect, QPoint, Signal
 from PySide6.QtWidgets import QWidget
-from PySide6.QtGui import QColor, QPixmap, QPainter, QPen, QBrush, QScreen, QMouseEvent, QPaintEvent, QGuiApplication
+from PySide6.QtGui import QColor, QPixmap, QPainter, QPen, QBrush, QScreen, QCloseEvent,QMouseEvent, QPaintEvent, QGuiApplication
 from helper.enum import HandlePosition, DegrePosition
 from widget.arrow_button import ArrowButton
 
 class AreaSelector(QWidget):
+    area_selected = Signal(QRect)
     def __init__(self):
         QWidget.__init__(self)
 
@@ -50,7 +51,6 @@ class AreaSelector(QWidget):
 
         self.setWindowTitle("Select Area")
         self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint | Qt.ToolTip)
-        self.setMinimumSize(self.frame_min_width, self.frame_min_height)
         self.setAttribute(Qt.WA_TranslucentBackground, True)
         self.setMouseTracking(True)
         self.hide()
@@ -92,8 +92,7 @@ class AreaSelector(QWidget):
         self.update()
 
 
-    def mouseMoveEvent(self, event: QMouseEvent) -> None:
-        print(event.pos())
+    def mouseMoveEvent(self, event: QMouseEvent):
         if self.detection_mode:
             self.unsetCursor()
             return
@@ -283,7 +282,7 @@ class AreaSelector(QWidget):
         self.handle_press = HandlePosition.NO_HANDLE
         self.update()
 
-    def paintEvent(self, event: QPaintEvent) -> None:
+    def paintEvent(self, event: QPaintEvent):
         pixmap: QPixmap = QPixmap(self.screen_width, self.screen_height)
         pixmap.fill(Qt.transparent)
         painter_pixmap = QPainter()
@@ -388,9 +387,6 @@ class AreaSelector(QWidget):
         painter.drawPixmap(self.frame_x + self.frame_width / 2 - button.get_width_half(), self.frame_y + self.frame_height / 2 - button.get_width_half(), button.get_arrow(DegrePosition.BOTTOM_MIDDLE))
         painter.drawPixmap(self.frame_x + self.frame_width / 2 - button.get_width_half(), self.frame_y + self.frame_height / 2 - button.get_width_half(), button.get_arrow(DegrePosition.MIDDLE_LEFT))
         return painter
-
-    def set_geometry(x: int, y: int, width: int, height: int):
-        pass
     
     def get_x(self):
         return self.frame_x 
@@ -403,3 +399,10 @@ class AreaSelector(QWidget):
 
     def get_height(self):
         return (self.frame_height - self.frame_pen_width) * self.frame_screen.devicePixelRatio()
+
+    def get_react(self):
+        return QRect(self.get_x(), self.get_y(), self.get_width(), self.get_height())
+
+    def closeEvent(self, event: QCloseEvent):
+        self.area_selected.emit(self.get_react())
+        event.accept()
