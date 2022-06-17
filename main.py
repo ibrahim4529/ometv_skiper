@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QApplication, QMainWindow,QWidget, QPushButton, QVBoxLayout
+from PySide6.QtWidgets import QApplication, QLabel, QMainWindow,QWidget, QPushButton, QVBoxLayout
 from PySide6.QtCore import Slot, QRect
 import numpy as np
 from widget.area_selector import AreaSelector
@@ -14,6 +14,7 @@ class MainWindow(QMainWindow):
         self.button_start = QPushButton("Start")
         self.button_start.setEnabled(False)
         self.image = ImageCv()
+        self.label_gender = QLabel()
 
         self.screen_graber_thread = ScreenGraberThread()
 
@@ -21,6 +22,7 @@ class MainWindow(QMainWindow):
         vbox.addWidget(self.image)
         vbox.addWidget(self.button_select_area)
         vbox.addWidget(self.button_start)
+        vbox.addWidget(self.label_gender)
         widget = QWidget()
         widget.setLayout(vbox)
 
@@ -28,7 +30,7 @@ class MainWindow(QMainWindow):
         self.button_select_area.clicked.connect(self.handle_select_area)
         self.button_start.clicked.connect(self.handle_start)
         self.screen_graber_thread.image_updated.connect(self.handle_image)
-
+        self.screen_graber_thread.gender_detected.connect(self.handle_gender_detection)
         self.setCentralWidget(widget)
     
     @Slot(QRect)
@@ -49,6 +51,9 @@ class MainWindow(QMainWindow):
         self.button_select_area.setEnabled(True)
         self.screen_graber_thread.start()
 
+    @Slot(str)
+    def handle_gender_detection(self, gender: str):
+        self.label_gender.setText("Gender: {}".format(gender))
     
     def closeEvent(self, event):
         self.screen_graber_thread.stop()
@@ -57,7 +62,6 @@ class MainWindow(QMainWindow):
     @Slot(np.ndarray)
     def handle_image(self, image: np.ndarray):
         self.image.update_image_cv(image)
-        # Todo make face and gender detection on here
 
 def main():
     app = QApplication()
