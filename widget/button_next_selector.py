@@ -119,7 +119,6 @@ class ButtonNextSelector(QWidget):
         if region_ok_button.contains(event.pos()):
             self.setCursor(Qt.PointingHandCursor)
             self.handle_under_mouse = HandlePosition.OK_HANDLE
-            print("ON OK")
             return
         self.unsetCursor()
         self.handle_under_mouse = HandlePosition.NO_HANDLE

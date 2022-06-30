@@ -29,6 +29,9 @@ class MainWindow(QMainWindow):
         self.label_gender = QLabel()
         self.button_next_selector = ButtonNextSelector()
         self.screen_graber_thread = ScreenGraberThread()
+        self.stop = QPushButton("Stop")
+        self.stop.setEnabled(False)
+
 
         vbox = QVBoxLayout()
         form = QFormLayout()
@@ -40,6 +43,7 @@ class MainWindow(QMainWindow):
         vbox.addWidget(self.button_select_start_btn)
         vbox.addWidget(self.button_start)
         vbox.addWidget(self.label_gender)
+        vbox.addWidget(self.stop)
         widget = QWidget()
         widget.setLayout(vbox)
 
@@ -53,10 +57,13 @@ class MainWindow(QMainWindow):
         self.screen_graber_thread.image_updated.connect(self.handle_image)
         self.screen_graber_thread.gender_detected.connect(self.handle_gender_detection)
         self.button_select_start_btn.clicked.connect(self.on_select_start_btn)
-
+        self.stop.clicked.connect(self.on_stop)
         self.setCentralWidget(widget)
         
-    
+    def on_stop(self):
+        self.screen_graber_thread.stop()
+        self.button_select_area.setEnabled(True)
+
     def on_select_start_btn(self):
         self.button_next_selector.init()
         self.button_next_selector.setVisible(True)
@@ -70,7 +77,6 @@ class MainWindow(QMainWindow):
 
     @Slot(QPoint)
     def handle_button_start_selected(self, point):
-        print(point)
         self.start_point = point
         self.button_next_selector.hide()
         self.button_start.setEnabled(True)
@@ -83,6 +89,7 @@ class MainWindow(QMainWindow):
     
     def handle_start(self):
         self.button_start.setEnabled(False)
+        self.stop.setEnabled(True)
         self.button_select_area.setEnabled(True)
         self.screen_graber_thread.start()
 
@@ -92,14 +99,13 @@ class MainWindow(QMainWindow):
         if gender == self.cb_gender.currentText() and self.can_click:
             pyautogui.click(x=self.start_point.x(), y=self.start_point.y())
             self.can_click = False
-            print("Clicked")
-            self.timer.singleShot(2000, self.on_timer)
+            self.timer.singleShot(5000, self.on_timer)
+        
     def closeEvent(self, event):
         self.screen_graber_thread.stop()
         event.accept()
     
     def on_timer(self):
-        print("Timer Check")
         self.can_click = True
 
     @Slot(np.ndarray)
