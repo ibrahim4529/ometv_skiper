@@ -25,7 +25,7 @@ class ScreenGraberThread(QThread):
                 img = cv2.cvtColor(img, cv2.COLOR_BGRA2RGB)
                 image, faces = detect_faces(img)
                 if not faces:
-                    self.gender_detected.emit("Not Foud")
+                    self.gender_detected.emit("Not Found")
                 for box in faces:
                     face = img[max(0, box[1] - 20):
                            min(box[3] + 20, img.shape[0] - 1), max(0, box[0] - 20)
