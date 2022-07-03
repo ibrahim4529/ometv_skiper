@@ -15,9 +15,11 @@ class ScreenGraberThread(QThread):
     def __init__(self):
         QThread.__init__(self)
         self.running = False
+        self.last_gender = ""
 
     def run(self):
         self.running = True
+        gender = "Not Found"
         with mss.mss() as sct:
             while self.running:
                 # The screen part to capture
@@ -25,12 +27,14 @@ class ScreenGraberThread(QThread):
                 img = cv2.cvtColor(img, cv2.COLOR_BGRA2RGB)
                 image, faces = detect_faces(img)
                 if not faces:
-                    self.gender_detected.emit("Not Found")
+                    gender = "Not Found"
                 for box in faces:
                     face = img[max(0, box[1] - 20):
                            min(box[3] + 20, img.shape[0] - 1), max(0, box[0] - 20)
                            :min(box[2] + 20, img.shape[1] - 1)]
                     gender = detect_gender(box, face)
+                if gender != self.last_gender:
+                    self.last_gender = gender
                     self.gender_detected.emit(gender)
                 self.image_updated.emit(image)
 
@@ -42,5 +46,8 @@ class ScreenGraberThread(QThread):
         self.running = True
         return super().start(priority)
     
+    def set_running(self,running: bool):
+        self.running = running
+       
     def set_monitor(self, monitor):
         self.monitor = monitor

@@ -31,12 +31,12 @@ class MainWindow(QMainWindow):
         self.screen_graber_thread = ScreenGraberThread()
         self.stop = QPushButton("Stop")
         self.stop.setEnabled(False)
-
-
         vbox = QVBoxLayout()
         form = QFormLayout()
+
         form.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
         form.addRow(QLabel("Skip On gender"), self.cb_gender)
+
         vbox.addWidget(self.image)
         vbox.addLayout(form)
         vbox.addWidget(self.button_select_area)
@@ -44,6 +44,7 @@ class MainWindow(QMainWindow):
         vbox.addWidget(self.button_start)
         vbox.addWidget(self.label_gender)
         vbox.addWidget(self.stop)
+
         widget = QWidget()
         widget.setLayout(vbox)
 
