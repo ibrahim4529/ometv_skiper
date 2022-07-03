@@ -14,5 +14,11 @@ based on your gender preference.
 - [X] Make screen capture for capturing image
 - [X] Make Face detection from screen capture
 - [X] Make gender detection 
-- [ ] Make button skip area picker
-- [ ] Make Action for skip image (using pyatogui)
+- [X] Make button skip area picker
+- [X] Make Action for skip image (using pyatogui)
+- [ ] Fixing model for detection gender (currenly use this [model](https://github.com/Isfhan/age-gender-detection))
+- [ ] Fixing timer to skip
+
+## Credit 
+- [Model](https://github.com/Isfhan/age-gender-detection)
+- [Code For Area selector](https://github.com/cheina97/ScreenRecorderQT)
